@@ -65,6 +65,11 @@ def dict2csv(d, f):
 		for k, v in d.items():
 			out.writerow([k, v])
 
+def dict2text(myfile, dict):
+	with open(myfile, 'w') as f:
+    	 for key, value in dict.items():
+        	f.write('%s:%s\n' % (key, value))
+
 def pprint_to_file(f_out, obj):
 	'''performs the pretty print operation to the specified file with the specified data object'''
 	with open (f_out, 'w') as out:

@@ -12,7 +12,7 @@ import pandas as pd
 from tqdm import *
 import util_.util as util
 import util_.in_out as in_out
-import feature_selection
+import feature_selection.fs as feature_selection
 
 def execute(in_dir, out_dir, record_id, algorithms, feature_selection, survival, oversampling, undersampling):
 	'''executes the learning task on the data in in_dir with the algorithms in algorithms.

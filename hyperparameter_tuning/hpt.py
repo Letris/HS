@@ -129,10 +129,10 @@ def RandomGridSearchRFC_Fixed(X,Y,splits, model, survival):
         scorer = make_scorer(CI, greater_is_better=True)
 
         y_for_cv = np.array([t[0] for t in Y])
-        cv = StratifiedKFold(y_for_cv, n_folds=2) # x-validation
+        cv = StratifiedKFold(y_for_cv, n_folds=splits) # x-validation
 
     else:
-        cv = StratifiedKFold(Y, n_folds=2) # x-validation
+        cv = StratifiedKFold(Y, n_folds=splits) # x-validation
         scores = ['roc_auc']   
 
     print ('  ...performing x-validation')
@@ -148,29 +148,21 @@ def RandomGridSearchRFC_Fixed(X,Y,splits, model, survival):
   
     return(clf.best_params_,clf)
 
-sm = SMOTE(random_state=12, ratio = 1.0)
+def CI(y_true, y_pred):
+    event_indicators = []
+    event_times = []
+    scores = []
 
-f = '/Users/Tristan/Downloads/FINAL_MODELS/merged_data/nonsurvFINAL/nonsurvFINAL.csv'#sys.argv[1]
-target_id = 'target'
-record_id = 'x'
-survival = False
-aggregation = True
-k=150
+    for target in y_true:
+        event_indicators.append(target[0])
+        event_times.append(target[1])
 
-x, y, headers, index_list = import_data(f, record_id, target_id, survival) # assumption: first column is patientnumber and is pruned, last is target
+    for prediction in y_pred:
+        scores.append(prediction)
+        
+    result = concordance_index_censored(np.array(event_indicators), np.array(event_times), np.array(scores).reshape(-1))[0]
 
-if aggregation == True:
-    X, headers = aggregations(f, index_list, survival)
+    return result
 
-new_X, best_features = pearson_fs(X, y, headers, k, feature_selection=True, survival=False)
 
-m_dict = dict()
 
-for m in ['cart', 'svm', 'rf', 'xgboost', 'lr']: #'cart', 'svm', 'rf', 'xgboost', 'lr'
-    best_params, model = RandomGridSearchRFC_Fixed(new_X, y, 2, m, survival)
-    m_dict[m] = best_params
-    print(m)
-    print(best_params)
-    print(m_dict)
-
-print(m_dict)
