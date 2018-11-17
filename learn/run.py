@@ -4,14 +4,14 @@ from execution import execute
 
 
 # fill in the directory where the input file (with feature vectors) is located
-in_dir = '' #some dir
+in_dir = "/Users/Tristan/Downloads/data/"
 
 # fill in the directory where you want the output to be saved
-out_dir = '' #some dir
+out_dir = '/Users/Tristan/Downloads/data' #some dir
 
 # Put the algorithms that you want to train in the following list
 # Options: SVM, CART, RF LR, XGBoost, COX, survSVM, GBS
-algorithms = ['LR']
+algorithms = ['LR', 'RF']
 
 # Choose whether you want to use feature selection (True/False)
 feature_selection = True

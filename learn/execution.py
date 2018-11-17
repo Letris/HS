@@ -1,5 +1,5 @@
 
-import learn.models as ML
+import models as ML
 from sklearn.feature_selection import SelectKBest, f_classif, chi2, VarianceThreshold
 import numpy as np
 from scipy.stats import pearsonr
@@ -12,7 +12,7 @@ import pandas as pd
 from tqdm import *
 import util_.util as util
 import util_.in_out as in_out
-import feature_selection
+import feature_selection.fs_algorithms as fs
 
 def execute(in_dir, out_dir, record_id, algorithms, feature_selection, survival, oversampling, undersampling):
 	'''executes the learning task on the data in in_dir with the algorithms in algorithms.
@@ -87,7 +87,7 @@ def execute_with_algorithm(alg, X, y, fname, headers, out_dir, record_id, featur
 	k=220
 
 	# perform feature selection
-	new_X, best_features, headers = feature_selection.pearson_fs(X, y, k, headers, feature_selection, survival)
+	new_X, best_features, headers = fs.pearson_fs(X, y, k, headers, feature_selection, survival)
 
 	# execute algorithm
 	if alg == 'DT':
