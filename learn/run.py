@@ -4,10 +4,10 @@ from execution import execute
 
 
 # fill in the directory where the input file (with feature vectors) is located
-in_dir = '' #some dir
+in_dir = "C:/Users/trist/Dropbox/Hacking Stroke/tristan/data/"
 
 # fill in the directory where you want the output to be saved
-out_dir = '' #some dir
+out_dir = 'C:/Users/trist/Documents/HackingStroke' #some dir
 
 # Put the algorithms that you want to train in the following list
 # Options: SVM, CART, RF LR, XGBoost, COX, survSVM, GBS
