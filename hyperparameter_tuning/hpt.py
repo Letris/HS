@@ -71,7 +71,7 @@ def RandomGridSearchRFC_Fixed(X,Y,splits, model, survival):
  
         tuned_parameters = {
         'n_estimators': ([200,500,1000]),
-        # 'max_features': (['auto', 'sqrt', 'log2',1,4,8]),                   # precomputed,'poly', 'sigmoid'
+        # 'max_features': (['auto', 'sqrt', 'log2',1,4,8]),               
         'max_depth':    ([10,20]),
         # 'criterion':    (['gini', 'entropy']),
         'min_samples_split':  [2,3,5],
@@ -138,8 +138,6 @@ def RandomGridSearchRFC_Fixed(X,Y,splits, model, survival):
     print ('  ...performing x-validation')
    
     clf =  GridSearchCV(clf, tuned_parameters, scoring='%s' % scores[0], cv=cv, verbose=10) #scoring='%s' % scores[0]
-    # clf = BayesSearchCV(clf, tuned_parameters, n_iter=50, cv=splits,
-    #                 optimizer_kwargs=dict(acq_func='LCB', base_estimator='RF'))
 
     clf.fit(X, Y)
 
@@ -149,6 +147,8 @@ def RandomGridSearchRFC_Fixed(X,Y,splits, model, survival):
     return(clf.best_params_,clf)
 
 def CI(y_true, y_pred):
+    '''Returns the concordance index'''
+    
     event_indicators = []
     event_times = []
     scores = []
