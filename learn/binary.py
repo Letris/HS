@@ -8,7 +8,7 @@ import numpy as np
 
 # algorithms
 from sklearn import ensemble, svm, tree, linear_model
-sys.path.insert(0, 'C:/Users/trist/Documents/GitHub/HS/')
+sys.path.insert(0, '/Users/Tristan/Downloads/HS')
 import util_.support as support
 # statistics, metrics, x-fold val, plots
 from sklearn.metrics import roc_curve, auc, confusion_matrix, make_scorer

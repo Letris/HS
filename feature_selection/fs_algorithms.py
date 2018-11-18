@@ -1,5 +1,4 @@
 
-import learn.models as ML
 from sklearn.feature_selection import SelectKBest, f_classif, chi2, VarianceThreshold
 import numpy as np
 from scipy.stats import pearsonr
