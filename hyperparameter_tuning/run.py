@@ -1,14 +1,15 @@
 ''' This file is used to perform hyperparameter tuning. You can change which parameters 
     and their values to tune in the file hpt.py file '''
-
+import sys
+sys.path.insert(0, '/Users/Tristan/Downloads/HS/')
 from util_.in_out import import_data, dict2text
-import feature_selection.fs as feature_selection
-from hyperparameter_tuning import RandomGridSearchRFC_Fixed
+import feature_selection.fs_algorithms as fs
+from hpt import RandomGridSearchRFC_Fixed
 
 # -------------------------------------------------------------------------------------------------------- parameters
 
 # fill in the directory to the file that you want to use 
-f = ''
+f = '/Users/Tristan/Downloads/data/nonsurvCRVMfinal.csv'
 
 # specify the identifier of a patient
 record_id = 'ID'
@@ -21,10 +22,10 @@ k=150
 
 # specify the models for whichh you want to perform hyperparameter tuning 
 # options: cart, svm, rf, xgboost, lr, cox, survSVM, gb
-models = []
+models = ['lr']
 
 # specify the dir where you want to save the output
-out_dir = ''
+out_dir = '/Users/Tristan/Downloads/data/hpt/hpt.txt'
 
 # specify the amount of folds
 splits = 2
@@ -35,11 +36,12 @@ splits = 2
 x, y, headers, index_list = import_data(f, record_id, survival) 
 
 # feature selection
-new_X, best_features = feature_selection.pearson_fs(x, y, headers, k, feature_selection=True, survival=False)
+new_X, best_features, headers = fs.pearson_fs(x, y, k, headers, feature_selection=True, survival=survival)
 
 m_dict = dict()
 
-for m in models: #'cart', 'svm', 'rf', 'xgboost', 'lr'
+# perform hpt for each specified model
+for m in models:
     print('performing hyperparameter tuning for {}'.format(m))
     best_params, model = RandomGridSearchRFC_Fixed(new_X, y, splits, m, survival)
     m_dict[m] = best_params
