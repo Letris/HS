@@ -9,58 +9,58 @@ import numpy as np
 import simplejson
 import pandas as pd
 from tqdm import *
-import util_.util as util
-import util_.in_out as in_out
 from sklearn import ensemble, svm, tree, linear_model
 from sklearn.feature_selection import RFE
 from sklearn.linear_model import Lasso
 
+def pearson_fs(X, y, headers, k, feature_selection, survival):
 
-def pearson_fs(X, y, k, headers, feature_selection, survival):
-	k = k
-	if feature_selection: #and X.shape[1] >= k
-		print ('  ...performing pearson feature selection')
+    if feature_selection:
+        # print ('  ...performing pearson feature selection')
 		
-		if survival:
-			pearson_y = []
-			for tup in y:
-				if tup[0] == False:
-					pearson_y.append(0)
-				else:
-					pearson_y.append(1)
-		else:
-			pearson_y = y
+        if survival:
+            pearson_y = []
+            for tup in y:
+                if tup[0] == False:
+                    pearson_y.append(0)
+                else:
+                    pearson_y.append(1)
+        else:
+            pearson_y = y
 
-		pearsons = []
-		for i in range(X.shape[1]):
-			p = pearsonr(np.squeeze(np.asarray(X[:,i])), pearson_y)
-			pearsons.append(abs(p[0]))
-		best_features = np.array(pearsons).argsort()[-k:][::-1]
+        pearsons = []
+
+        for i in range(X.shape[1]):
+            p = pearsonr(np.squeeze(np.asarray(X[:,i])), pearson_y)
+            pearsons.append(abs(p[0]))
+
+        best_features = np.array(pearsons).argsort()[-k:][::-1]
 		# print best_features
-
-		new_headers = []
-		test_list = best_features.tolist()
-
-		# make sure none of the target values are present in the feature vector
-		for i in best_features:
-			if headers[i].upper()[0:3] in ['K90', 'K89', 'k90', 'k89', 'target', 'TARGET', 'tar', 'TAR']:
-				print(headers[i])
-				index = test_list.index(i)
-				best_features = np.delete(best_features, index)
-				test_list.pop(index)
-				continue
-			else:
-				new_headers.append(headers[i])
+        # print(headers[best_features])
+        new_headers = []
+        test_list = best_features.tolist()
+        for i in best_features:
+            if headers[i].upper()[0:3] in ['K90', 'K89', 'k90', 'k89', 'target', 'TARGET', 'tar', 'TAR']:
+                index = test_list.index(i)
+                best_features = np.delete(best_features, index)
+                test_list.pop(index)
+                continue
+            else:
+                new_headers.append(headers[i])
 
 
-		headers = new_headers
-		new_X = X[:,best_features]
-		
-	else:
-		new_X = X
-		best_features='all'
-		
-	return new_X, best_features, headers
+        headers = new_headers
+
+        new_X = X[:,best_features]
+        f = open('/Users/Tristan/Downloads/merged/important_features/pearson.txt', 'w')
+        simplejson.dump(headers, f)
+        f.close()
+
+    else:
+        new_X = X
+        best_features = 'all'
+
+    return new_X, best_features, headers
 
 
 def lasso_fs(X, y, headers, k, feature_selection):

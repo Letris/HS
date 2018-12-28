@@ -80,6 +80,64 @@ def get_headers(row): #deze zelf toegevoegd uit util.py. want import util gaf er
 	headers[0] = headers[0].split("\xef\xbb\xbf")[1] if headers[0].startswith('\xef') else headers[0] # fix funny encoding problem
 	return headers
 
+def import_data2(f, record_id, target_id, survival):
+	# '''imports the data and converts it to X (input) and y (output) data vectors'''
+
+    rows = read_csv2(f)
+    headers = get_headers(next(rows))
+
+	# save and split records
+    print ('  ...(loading)')
+    records = [row[1:] for row in rows]
+    print ('  ...(converting to matrix)')
+    records = np.matrix(records)
+    X = records[:,0:-1] # features
+    headers = headers[1:-1]
+
+	# output
+    y = records[:,-1] # target
+
+    if survival == False:
+        y=np.squeeze(np.asarray(y.astype(np.int)))
+
+        print ('  ...(converting data type)')
+
+        X = X.astype(np.float64, copy=False)
+        y = y.astype(np.float64, copy=False)
+        index_list = None
+	
+    if survival == True:
+        target_list = []
+
+        y=np.squeeze(np.asarray(y.astype(list)))
+        X = X.astype(np.float64, copy=False)
+
+        index_list = []
+        for idx, target in tqdm(enumerate(y)):
+            target = eval(target)
+            tuple_target = tuple(target)
+            if tuple_target[1] <= 0:
+                print('yes sir')
+                index_list.append(idx)
+                continue
+
+            target_list.append(tuple_target)
+
+        
+		# print(target_list)
+        y = np.array(target_list, dtype=[('Status', '?'), ('Survival in days', '<f8')])
+
+        X = np.delete(X, (index_list), axis=0)
+
+	
+        print ('  ...(converting data type)')
+		# X = X.astype(np.float64, copy=False)
+		# print(X)
+		# X = OneHotEncoder().fit_transform(X)
+
+
+    return X, y, headers, index_list
+
 def import_data(f, record_id, survival):
 	# '''imports the data and converts it to X (input) and y (output) data vectors'''
 

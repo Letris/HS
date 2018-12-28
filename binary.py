@@ -9,7 +9,7 @@ import numpy as np
 # algorithms
 from sklearn import ensemble, svm, tree, linear_model
 sys.path.insert(0, '/Users/Tristan/Downloads/HS')
-import util_.support as support
+import support as support
 # statistics, metrics, x-fold val, plots
 from sklearn.metrics import roc_curve, auc, confusion_matrix, make_scorer
 from sklearn.cross_validation import StratifiedKFold

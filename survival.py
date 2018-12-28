@@ -8,7 +8,7 @@ import numpy as np
 
 # algorithms
 from sklearn import ensemble, svm, tree, linear_model
-import util_.support as support
+import support as support
 
 # statistics, metrics, x-fold val, plots
 from sklearn.metrics import roc_curve, auc, confusion_matrix, make_scorer
