@@ -1,9 +1,10 @@
 ''' This file is used to perform hyperparameter tuning. You can change which parameters 
     and their values to tune in the file hpt.py file '''
+    
 import sys
 sys.path.insert(0, '/Users/Tristan/Downloads/HS/')
-from util_.in_out import import_data, dict2text
-import feature_selection.fs_algorithms as fs
+from in_out import import_data2, dict2text
+import fs_algorithms as fs
 from hpt import RandomGridSearchRFC_Fixed
 
 # -------------------------------------------------------------------------------------------------------- parameters
@@ -13,7 +14,7 @@ f = '/Users/Tristan/Downloads/data/nonsurvCRVMfinal.csv'
 
 # specify the identifier of a patient
 record_id = 'ID'
-
+target_id = 'target'
 # specifiy whether you are tuning parameters for survival or non-survival models (True/False)
 survival = False
 
@@ -33,10 +34,10 @@ splits = 2
 #-------------------------------------------------------------------------------------------------------- runcode
 
 # import data
-x, y, headers, index_list = import_data(f, record_id, survival) 
+x, y, headers, index_list = import_data2(f, record_id, target_id, survival) 
 
 # feature selection
-new_X, best_features, headers = fs.pearson_fs(x, y, k, headers, feature_selection=True, survival=survival)
+new_X, best_features, headers = fs.pearson_fs(x, y, headers, k, feature_selection=True, survival=survival)
 
 m_dict = dict()
 

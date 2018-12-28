@@ -6,10 +6,10 @@ from sksurv.linear_model import CoxPHSurvivalAnalysis, CoxnetSurvivalAnalysis
 #-------------------------------------------------------------------------- Parameters
 
 # Specify the file that you want to use
-f = ''
+f = '/Users/Tristan/Downloads/data/nonsurvCRVMfinal.csv'
 
 # specify where you want to save the final plot
-plot_file = ''
+plot_file = '/Users/Tristan/Downloads/data/'
 
 # Specify the range of amount of features that you want to test 
 k_range = range(25, 1000, 25) # (start, end, step)
@@ -21,7 +21,7 @@ survival = False
 # Example non-survival : linear_model.LogisticRegression()
 # Example survival : CoxnetSurvivalAnalysis(l1_ratio=0.1, n_alphas=200)
 
-clf = linear_model.LogisticRegression()
+clf = ensemble.RandomForestClassifier(n_estimators=200, max_depth=20, min_samples_leaf=5, min_samples_split=2, n_jobs=-1)
 
 # Specify labels and title for plot
 title = 'k_AUC trade-off curve'
