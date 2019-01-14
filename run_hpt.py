@@ -10,7 +10,7 @@ from hpt import RandomGridSearchRFC_Fixed
 # -------------------------------------------------------------------------------------------------------- parameters
 
 # fill in the directory to the file that you want to use 
-f = '/Users/Tristan/Downloads/data/nonsurvCRVMfinal.csv'
+f = '/Users/Tristan/Downloads/xxx/Preprocessed16clas.csv'
 
 # specify the identifier of a patient
 record_id = 'ID'
@@ -19,11 +19,11 @@ target_id = 'target'
 survival = False
 
 # specify the amount of features that the model has to use for training
-k=150
+k=50
 
 # specify the models for whichh you want to perform hyperparameter tuning 
 # options: cart, svm, rf, xgboost, lr, cox, survSVM, gb
-models = ['lr']
+models = ['rf', 'lr', 'xgboost', 'svm']
 
 # specify the dir where you want to save the output
 out_dir = '/Users/Tristan/Downloads/data/hpt/hpt.txt'
@@ -37,7 +37,7 @@ splits = 2
 x, y, headers, index_list = import_data2(f, record_id, target_id, survival) 
 
 # feature selection
-new_X, best_features, headers = fs.pearson_fs(x, y, headers, k, feature_selection=True, survival=survival)
+new_X, best_features = fs.random_forest_fs(x, y, headers, k, feature_selection=True, survival=survival)
 
 m_dict = dict()
 

@@ -10,12 +10,17 @@ from tqdm import *
 from sksurv.linear_model import CoxPHSurvivalAnalysis, CoxnetSurvivalAnalysis
 from sksurv.metrics import concordance_index_censored
 from sklearn import ensemble, svm, tree, linear_model
-from fs_algorithms import pearson_fs
+from fs_algorithms import pearson_fs, random_forest_fs
 
 
-def execute_nonsurvival(X, y, k, headers, clf):
-    
-        new_X, best_features, headers = pearson_fs(X, y, headers, k, feature_selection=True, survival=False)
+def execute_nonsurvival(X, y, k, headers, clf, selector):
+        if selector == 'PE':
+            new_X, best_features, headers = pearson_fs(X, y, headers, k, feature_selection=True, survival=False)
+            print(best_features)
+        else:
+            new_X, best_features = random_forest_fs(X, y, headers, k, feature_selection=True)
+            print(best_features)
+
         cv = StratifiedKFold(y, n_folds=3) # x-validation 
 
         #clf = ensemble.RandomForestClassifier(n_estimators=200, max_depth=20, min_samples_leaf=5, min_samples_split=2, n_jobs=-1)
@@ -57,8 +62,12 @@ def execute_nonsurvival(X, y, k, headers, clf):
 
         return mean_auc
 
-def execute_survival(X, y, k, headers, clf):
-    new_X, best_features, headers = pearson_fs(X, y, headers, k, feature_selection=True, survival=True)
+def execute_survival(X, y, k, headers, clf, selector):
+    if selector == 'PE':
+        new_X, best_features, headers = pearson_fs(X, y, headers, k, feature_selection=True, survival=True)
+    else:
+        new_X, best_features = random_forest_fs(X, y, headers, k, feature_selection=True)
+
     y_for_cv = np.array([t[0] for t in y])
     cv = StratifiedKFold(y_for_cv, n_folds=5) # x-validation
     

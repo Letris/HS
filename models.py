@@ -44,7 +44,7 @@ def SVM(X, y, best_features, oversampling, undersampling):
 
 def CART(X, y, best_features, out_file, field_names, oversampling, undersampling):
    
-    results, model = execute_non_survival(X, y, best_features, lambda: tree.DecisionTreeClassifier(criterion='gini', max_depth=10, min_samples_leaf=2, min_samples_split=2), oversampling, undersampling)
+    results, model = execute_non_survival(X, y, best_features, lambda: tree.DecisionTreeClassifier(criterion='gini', max_depth=10, min_samples_leaf=5, min_samples_split=2), oversampling, undersampling)
    
     if model:
         tree.export_graphviz(model, out_file=out_file, feature_names=field_names)
@@ -52,7 +52,7 @@ def CART(X, y, best_features, out_file, field_names, oversampling, undersampling
 
 def RF(X, y, best_features, oversampling, undersampling, n_estimators):
     
-    results, model = execute_non_survival(X, y, best_features, lambda: ensemble.RandomForestClassifier(n_estimators=200, max_depth=20, min_samples_leaf=3, min_samples_split=5, n_jobs=-1), oversampling, undersampling)
+    results, model = execute_non_survival(X, y, best_features, lambda: ensemble.RandomForestClassifier(n_estimators=200, max_depth=10, min_samples_leaf=5, min_samples_split=2, n_jobs=-1), oversampling, undersampling)
    
     if model:
         features = model.feature_importances_
@@ -73,11 +73,14 @@ def LR(X, y, best_features, oversampling, undersampling):
     return results, features, model
 
 def XGBoost(X, y, best_features, oversampling, undersampling):
-    
-    results, model = execute_survival(X, y, best_features, lambda: XGBClassifier(booster='gbtree', max_depth=10, reg_alpha=1, reg_lambda=1, subsample=1))
+    print('whaaat')
+    print(best_features)
+    results, model = execute_non_survival(X, y, best_features, lambda: XGBClassifier(booster='gbtree', max_depth=10, reg_alpha=5, reg_lambda=1, subsample=0.5), oversampling, undersampling)
     
     if model:
         features = model.feature_importances_
+        print('sigh')
+        print(features)
         plot_importance(model)
     else:
         features = False

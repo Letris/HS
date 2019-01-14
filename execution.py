@@ -21,7 +21,8 @@ def execute(in_dir, out_dir, record_id, algorithms, feature_selection, survival,
 	print ('### executing learning algorithms on... ###')
 	
 	# get the files
-	files = util.list_dir_csv(in_dir)
+	# files = util.list_dir_csv(in_dir)
+	files = [in_dir]
 
 	# stop if no files found
 	if not files:
@@ -46,9 +47,9 @@ def execute(in_dir, out_dir, record_id, algorithms, feature_selection, survival,
 		for f, f_test in zip(files,files_test):
 			fname = in_out.get_file_name(f, extension=False)
 			print (' ...{}'.format(fname))
-	
+			target_id='xx'
 			# get data, split in features/target. If invalid stuff happened --> exit
-			X, y, headers, target_list = in_out.import_data(f, record_id, survival) # assumption: first column is patientnumber and is pruned, last is target
+			X, y, headers, target_list = in_out.import_data2(f, record_id, target_id, survival) # assumption: first column is patientnumber and is pruned, last is target
 			if type(X) == bool: return
 	
 
@@ -84,11 +85,11 @@ def execute_with_algorithm(alg, X, y, fname, headers, out_dir, record_id, featur
 	# if survival == False and aggregation == False:
 	# 	k=220
 
-	k=220
+	k=50
 
 	# perform feature selection
-	new_X, best_features, headers = fs.pearson_fs(X, y, headers, k, feature_selection, survival)
-
+	new_X, best_features = fs.random_forest_fs(X, y, headers, k, feature_selection, survival)
+	print(best_features)
 	# execute algorithm
 	if alg == 'DT':
 		results, model = ML.CART(new_X, y, best_features, out_dir+"{}.dot".format(fname), headers, oversampling, undersampling)  #out_dir+"{}.dot".format(fname)

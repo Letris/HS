@@ -19,7 +19,7 @@ def read_csv(f, delim=',', index_col='pseudopatnummer'):
 	return pd.read_csv(f, sep=';', index_col=index_col, encoding = "ISO-8859-1") #index_col='pseudopatnummer'
 	# return pd.read_csv(open(f, 'r'), sep=delim,encoding='latin-1')
 
-def read_csv2(f, delim=','): #returns reader object which will iterate over lines in the given csv file
+def read_csv2(f, delim='\t'): #returns reader object which will iterate over lines in the given csv file
 	'''opens a csv reader object'''
 	return csv.reader(open(f, "r"), delimiter=delim) #was open(f,'rb')
 
@@ -95,10 +95,12 @@ def import_data2(f, record_id, target_id, survival):
     headers = headers[1:-1]
 
 	# output
-    y = records[:,-1] # target
+	
+    
 
     if survival == False:
-        y=np.squeeze(np.asarray(y.astype(np.int)))
+        y = records[:,-1] # target
+        y=np.squeeze(np.asarray(y.astype(np.float)))
 
         print ('  ...(converting data type)')
 
@@ -107,27 +109,32 @@ def import_data2(f, record_id, target_id, survival):
         index_list = None
 	
     if survival == True:
+        print('z')
         target_list = []
-
-        y=np.squeeze(np.asarray(y.astype(list)))
+        indicator = records[:,-2]
+        time_event = records[:,-1]
+        print('xx')
+        indicator=np.squeeze(np.asarray(indicator.astype(list)))
+        time_event=np.squeeze(np.asarray(time_event.astype(list)))
         X = X.astype(np.float64, copy=False)
+        print('dd')
+        zipped = list(zip(indicator, time_event))
 
-        index_list = []
-        for idx, target in tqdm(enumerate(y)):
-            target = eval(target)
-            tuple_target = tuple(target)
-            if tuple_target[1] <= 0:
-                print('yes sir')
-                index_list.append(idx)
-                continue
+        # index_list = []
+        # for idx, target in tqdm(enumerate(y)):
+        #     target = eval(target)
+        #     tuple_target = tuple(target)
+        #     if tuple_target[1] <= 0:
+        #         print('yes sir')
+        #         index_list.append(idx)
+        #         continue
 
-            target_list.append(tuple_target)
-
+        #     target_list.append(tuple_target)
         
 		# print(target_list)
-        y = np.array(target_list, dtype=[('Status', '?'), ('Survival in days', '<f8')])
+        y = np.array(zipped, dtype=[('Status', '?'), ('Survival in days', '<f8')])
 
-        X = np.delete(X, (index_list), axis=0)
+        # X = np.delete(X, (index_list), axis=0)
 
 	
         print ('  ...(converting data type)')

@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 
 
-def amt_features(f, survival, clf, k_range):
+def amt_features(f, clf_binary, clf_survival, k_range, selector, survival):
     record_id = 'ID'
     target_id = 'target'
 
@@ -21,15 +21,16 @@ def amt_features(f, survival, clf, k_range):
     best_AUC = 0
     best_IC = 0
 
+
     for k in k_range: #range(25,1000,25)
         # y_for_cv = np.array([t[0] for t in y])
         if survival == True:
-            mean_IC = execute_survival(X, y, k, headers, clf)
+            mean_IC = execute_survival(X, y, k, headers, clf_survival, selector)
             auc_k_dict_pearson[k] = mean_IC
             if mean_IC > best_IC:
                 best_k = k
         else:
-            mean_AUC = execute_nonsurvival(X, y, k, headers, clf)
+            mean_AUC = execute_nonsurvival(X, y, k, headers, clf_binary, selector)
             auc_k_dict_pearson[k] = mean_AUC
             if mean_AUC > best_AUC:
                 best_k = k
@@ -43,9 +44,11 @@ def amt_features(f, survival, clf, k_range):
 
     return x_pearson, y_pearson
 
-def plot_Kcurve(x, y, title, xlabel, ylabel, plot_file):
+def plot_Kcurve(x, y, x1, y1, title, xlabel, ylabel, plot_file):
     ''' Function used to plot the k-AUC/IC trade-off curve''' 
-    plt.plot(x, y)
+    plt.plot(x, y, label='BE')
+    plt.plot(x1, y1, label='PE')
+    plt.ylim(0, 1)
     plt.title(title)
     plt.ylabel(ylabel)
     plt.xlabel(xlabel)
@@ -61,17 +64,17 @@ def import_data(f, record_id, target_id, survival):
 
 	# save and split records
     print ('  ...(loading)')
-    records = [row[1:] for row in rows]
+    records = [row[0:] for row in rows]
     print ('  ...(converting to matrix)')
     records = np.matrix(records)
     X = records[:,0:-1] # features
-    headers = headers[1:-1]
-
+    headers = headers[0:-1]
+        
 	# output
     y = records[:,-1] # target
 
     if survival == False:
-        y=np.squeeze(np.asarray(y.astype(np.int)))
+        y=np.squeeze(np.asarray(y.astype(np.float64)))
 
         print ('  ...(converting data type)')
 
@@ -104,14 +107,10 @@ def import_data(f, record_id, target_id, survival):
 
 	
         print ('  ...(converting data type)')
-		# X = X.astype(np.float64, copy=False)
-		# print(X)
-		# X = OneHotEncoder().fit_transform(X)
-
 
     return X, y, headers, index_list
 
-def read_csv2(f, delim=','): #returns reader object which will iterate over lines in the given csv file
+def read_csv2(f, delim='\t'): #returns reader object which will iterate over lines in the given csv file
 	'''opens a csv reader object'''
 	return csv.reader(open(f, "r"), delimiter=delim) #was open(f,'rb')
 

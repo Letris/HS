@@ -97,10 +97,22 @@ def lasso_fs(X, y, headers, k, feature_selection):
         return new_X, top_features
 
 
-def random_forest_fs(X, y, headers, k, feature_selection):
+def random_forest_fs(X, y, headers, k, feature_selection, survival):
 
     if feature_selection and X.shape[1] >= k:
         print ('  ...performing random forest regressor feature selection')
+
+        if survival:
+            new_y = []
+            for tup in y:
+                if tup[0] == False:
+                    new_y.append(0)
+                else:
+                    new_y.append(1)
+            y=new_y
+
+        else:
+            y = y
 
         rf = RandomForestRegressor()
         rf.fit(X, y)
